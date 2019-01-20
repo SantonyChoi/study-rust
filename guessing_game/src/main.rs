@@ -17,11 +17,11 @@ static TENS: [&str; 10] = [
     "nineteen",
 ];
 
-static MORETENS: [&str; 10] = [
+static TENTHS: [&str; 10] = [
     "", "", "twenty", "thirty", "fourty", "fifty", "sixty", "seventy", "eighty", "ninety",
 ];
 
-static LARGEUNITS: [&str; 11] = [
+static SEPARATORS: [&str; 8] = [
     "",
     "",
     "thousand",
@@ -30,16 +30,13 @@ static LARGEUNITS: [&str; 11] = [
     "trillion",
     "quadrillion",
     "quintillion",
-    "sextillion",
-    "septillion",
-    "octillion",
 ];
 
 fn main() {
     let mut number = String::new();
     let mut result = String::new();
 
-    println!("Please input number.");
+    println!("Please input a number under 18446744073709551615");
 
     io::stdin()
         .read_line(&mut number)
@@ -72,7 +69,7 @@ fn main() {
             }
 
             let this_chunk = one_step(this_turn);
-            let this_last_unit = get_last_unit(times as usize);
+            let this_last_unit = get_separators(times as usize);
 
             result = format!("{} {}{}", this_chunk, this_last_unit, result);
         }
@@ -88,24 +85,26 @@ fn get_this_turn(number: &mut u64) -> u64 {
 
 fn one_step(number: u64) -> String {
     let hundred: String = get_hundred((number / 100) as usize);
-    let ten: String = get_ten((number % 100) as usize);
+    let ten: String = get_tenth((number % 100) as usize);
 
     if number / 100 == 0 {
         format!("{}", ten)
     } else if number % 100 == 0 {
         format!("{}", hundred)
+    } else {
         format!("{} {}", hundred, ten)
     }
 }
 
 fn get_hundred(number: usize) -> String {
     if number == 0 {
+        String::new()
     } else {
         format!("{} hundred", UNITS[number])
     }
 }
 
-fn get_ten(number: usize) -> String {
+fn get_tenth(number: usize) -> String {
     if number == 0 {
         String::new()
     } else if number < 10 {
@@ -115,10 +114,10 @@ fn get_ten(number: usize) -> String {
     } else {
         let upper = number / 10;
         let lower = number % 10;
-        format!("{} {}", MORETENS[upper], UNITS[lower])
+        format!("{} {}", TENTHS[upper], UNITS[lower])
     }
 }
 
-fn get_last_unit(number: usize) -> &'static str {
-    LARGEUNITS[number]
+fn get_separators(number: usize) -> &'static str {
+    SEPARATORS[number]
 }
